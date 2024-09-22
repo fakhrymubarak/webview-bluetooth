@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker Web Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        button {
+            width: calc(100% - 48px); /* Full width with 24dp margin on both sides */
+            margin: 12px;
+            padding: 16px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            background-color: #6200EE;
+            color: white;
+            cursor: pointer;
+        }
+        p {
+            font-size: 18px;
+            margin: 24px;
+            color: #333;
+        }
+        .device-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            margin: 8px 0;
+            padding: 12px;
+            width: calc(100% - 48px);
+            cursor: pointer;
+        }
+    </style>
+    <script type="text/javascript">
+        function showToast() {
+            // Calls the showToast function in the JavaScript interface
+            var showToastResult = Android.showToast("Hello from WebView!");
+            var button = document.getElementById("showToast");
+            button.textContent = showToastResult;
+            return "Show Toast : Success";
+        }
+
+        function openPermissionSettings() {
+            // Calls the openPermissionSettings function in the JavaScript interface
+            Android.openPermissionSettings();
+        }
+
+        function openBluetoothSettings() {
+            // Calls the openBluetoothSettings function in the JavaScript interface
+            Android.openBluetoothSettings();
+        }
+
+        function checkBluetoothPermission() {
+            // Calls the hasBluetoothPermission function in the JavaScript interface and displays result
+            var hasPermission = Android.hasBluetoothPermission();
+            alert("Bluetooth permission granted: " + hasPermission);
+        }
+
+        function requestBluetoothPermission() {
+            // Calls the requestBluetoothPermission function in the JavaScript interface
+            Android.requestBluetoothPermission();
+        }
+
+        function onBluetoothPermissionResult(result) {
+            alert("Request bluetooth permission result : " + result);
+        }
+
+        function checkLocationPermission() {
+            // Calls the checkLocationPermission function in the JavaScript interface and displays result
+            var locationPermissionStatus = Android.checkLocationPermission();
+            alert("Location permission status: " + locationPermissionStatus);
+        }
+
+        function requestLocationPermission() {
+            // Calls the requestLocationPermission function in the JavaScript interface
+            Android.requestLocationPermission();
+        }
+
+        function onLocationPermissionResult(result) {
+            alert("Request location permission result : " + result);
+        }
+
+        var foundDevices = [];
+        function updateDeviceList(deviceName, deviceAddress) {
+
+            // Check if the deviceAddress is already in the list
+            if (foundDevices.includes(deviceAddress)) {
+                return; // Skip if the device is already added
+            }
+            // Add the device address to the list to avoid duplicates
+            foundDevices.push(deviceAddress);
+
+            var ul = document.getElementById("bluetoothDevices");
+            var button = document.createElement("button");
+            var deviceInfo = deviceName + " - " + deviceAddress
+            button.className = "device-button";
+            button.textContent = deviceInfo;
+            button.onclick = function() {
+                Android.connectTo(deviceAddress);
+            };
+            ul.appendChild(button);
+        }
+
+        // Function to clear the device list and reset tracking array
+        function clearDeviceList() {
+            foundDevices = []; // Clear the tracking array
+
+            var ul = document.getElementById("bluetoothDevices");
+            ul.innerHTML = ''; // Clear the HTML content (remove all device buttons)
+        }
+
+        function scanBluetooth() {
+            // Calls the requestLocationPermission function in the JavaScript interface
+            Android.scanBluetooth();
+            clearDeviceList();
+        }
+
+        var pairedDevices = [];
+        function updatePairedDeviceList(deviceName, deviceAddress) {
+            if (pairedDevices.includes(deviceAddress)) {
+                return; // Skip if the device is already added
+            }
+            pairedDevices.push(deviceAddress);
+
+            var ul = document.getElementById("pairedBluetoothDevices");
+            var button = document.createElement("button");
+            var deviceInfo = deviceName + " - " + deviceAddress
+            button.className = "device-button";
+            button.textContent = deviceInfo;
+            button.onclick = function() {
+                Android.connectTo(deviceAddress);
+            };
+            ul.appendChild(button);
+        }
+
+        // Function to clear the device list and reset tracking array
+        function clearPairedDeviceList() {
+            pairedDevices = []; // Clear the tracking array
+
+            var ul = document.getElementById("pairedBluetoothDevices");
+            ul.innerHTML = ''; // Clear the HTML content (remove all device buttons)
+        }
+
+        function checkPairedBluetooth() {
+            // Calls the requestLocationPermission function in the JavaScript interface
+            Android.checkPairedBluetooth();
+            clearPairedDeviceList();
+        }
+
+        function setCustomerType(custType) {
+            return 'Success setCustomerType to WebApp: ' + custType
+        }
+    </script>
+</head>
+<body>
+<h1>Tracker Web Interface</h1>
+
+<button id="showToast" onclick="showToast()">Show Toast</button>
+<button onclick="openPermissionSettings()">Open Permission Settings</button>
+<button onclick="openBluetoothSettings()">Open Bluetooth Settings</button>
+<button onclick="checkBluetoothPermission()">Check Bluetooth Permission</button>
+<button onclick="requestBluetoothPermission()">Request Bluetooth Permission</button>
+<button onclick="checkLocationPermission()">Check Location Permission</button>
+<button onclick="requestLocationPermission()">Request Location Permission</button>
+
+<h5>Check for Paired Bluetooth Devices</h5>
+<button onclick="checkPairedBluetooth()">Check Paired Bluetooth Devices</button>
+<ul id="pairedBluetoothDevices">
+    <!-- Bluetooth devices will be listed here as clickable buttons -->
+</ul>
+
+<h5>Search Nearby Bluetooth Devices</h5>
+<button onclick="scanBluetooth()">Search Nearby Bluetooth Devices</button>
+<ul id="bluetoothDevices">
+    <!-- Bluetooth devices will be listed here as clickable buttons -->
+</ul>
+
+</body>
+</html>
